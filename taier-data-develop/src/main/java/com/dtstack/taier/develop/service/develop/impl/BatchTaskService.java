@@ -862,11 +862,24 @@ public class BatchTaskService extends ServiceImpl<DevelopTaskMapper, Task> {
             }
             taskVO.setTaskParams(taskVO.getTaskParams() == null ? taskTemplateService.getTaskTemplate(TaskTemplateType.TASK_PARAMS.getType(), taskVO.getTaskType(), taskVO.getComponentVersion()).getContent() : taskVO.getTaskParams());
             return (TaskVO) updateTask(taskVO, false);
+        } else if (EScheduleJobType.MR.getVal().equals(taskResourceParam.getTaskType())) {
+            taskVO.setTaskParams(taskVO.getTaskParams() == null ? taskTemplateService.getTaskTemplate(TaskTemplateType.TASK_PARAMS.getType(), taskVO.getTaskType(), taskVO.getComponentVersion()).getContent() : taskVO.getTaskParams());
+            updateTask(taskVO, false);
+            dependencyResourceDeal(taskResourceParam, taskVO);
+            return taskVO;
         }
         if (EScheduleJobType.SYNC.getType().equals(taskVO.getTaskType()) || EScheduleJobType.DATA_ACQUISITION.getType().equals(taskVO.getTaskType())) {
             return addOrUpdateSyncTask(taskResourceParam);
         }
         return null;
+    }
+
+    private void dependencyResourceDeal(TaskResourceParam taskResourceParam, TaskVO taskVO) {
+        if (CollectionUtils.isEmpty(taskResourceParam.getResourceIdList())) {
+            return;
+        }
+       batchTaskResourceService.save(taskVO, taskResourceParam.getResourceIdList(), ResourceRefType.MAIN_RES.getType());
+
     }
 
     /**
