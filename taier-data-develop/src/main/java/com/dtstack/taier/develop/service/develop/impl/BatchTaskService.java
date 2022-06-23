@@ -287,6 +287,8 @@ public class BatchTaskService extends ServiceImpl<DevelopTaskMapper, Task> {
             setTaskVariables(taskVO, taskVO.getId());
             taskVO.setDependencyTasks(buildDependTaskList(task.getId()));
         }
+        List<BatchResource> resources = batchTaskResourceService.getResources(taskVO.getId(), ResourceRefType.MAIN_RES.getType());
+        taskVO.setResourceList(resources);
         List<BatchTaskVersionDetailDTO> byTaskIds = taskVersionService.getByTaskIds(Collections.singletonList(taskVO.getId()));
         taskVO.setSubmitted(CollectionUtils.isNotEmpty(byTaskIds));
         return taskVO;

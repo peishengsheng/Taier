@@ -1,6 +1,7 @@
 package com.dtstack.taier.develop.dto.devlop;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dtstack.taier.dao.domain.BatchResource;
 import com.dtstack.taier.dao.domain.Task;
 
 import java.sql.Timestamp;
@@ -73,6 +74,14 @@ public class TaskVO extends Task {
      */
     private String tenantName;
 
+    private List<BatchResource> resourceList;
+
+    public List<BatchResource> getResourceList() {
+        return resourceList;
+    }
+    public void setResourceList(List<BatchResource> resourceList) {
+        this.resourceList = resourceList;
+    }
     public Boolean getSubmitted() {
         return submitted;
     }
