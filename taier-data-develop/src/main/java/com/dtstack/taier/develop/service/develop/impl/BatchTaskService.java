@@ -2539,6 +2539,7 @@ public class BatchTaskService extends ServiceImpl<DevelopTaskMapper, Task> {
             if (component.contains(EComponentType.FLINK.getTypeCode())) {
                 supportType.add(EScheduleJobType.SYNC);
                 supportType.add(EScheduleJobType.SQL);
+                supportType.add(EScheduleJobType.MR);
                 supportType.add(EScheduleJobType.DATA_ACQUISITION);
             }
 
