@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +61,18 @@ public class DevelopScriptService {
     @Autowired
     private DatasourceOperator datasourceOperator;
 
+    /**
+     * 创建DataX脚本
+     */
+    private static final String CREATE_TEMP_DATAX_PY = "%s/bin/datax.py   %s";
+
     public ExecuteResultVO runScriptWithTask(Long userId, Long tenantId, String sqlText, Task task) throws Exception {
+        if (EScheduleJobType.DATAX.getType().equals(task.getTaskType())){
+            //init process builder
+            ProcessBuilder processBuilder = new ProcessBuilder("b", "/Users/dtstack/ide/Taier/datax/job");
+            Process process = processBuilder.start();
+            int rc = process.waitFor();
+        }
         Map<String, Object> actionParam = readyForScriptImmediatelyJob(task, sqlText, tenantId);
         String extraInfo = JSON.toJSONString(actionParam);
         ParamTaskAction paramTaskAction = new ParamTaskAction();
@@ -112,7 +125,15 @@ public class DevelopScriptService {
     }
 
     private String buildScriptExeArgs(Task task, String sqlText, Long tenantId) {
-        String fileDir = uploadSqlTextToHdfs(sqlText, task.getTaskType(), task.getName(), tenantId);
+        String fileDir;
+        if(task.getTaskType().equals(EScheduleJobType.DATAX.getVal())) {
+            String job_home = "/Users/dtstack/ide/Taier/datax/"+task.getName()+".json";
+            //todo datax的路径可配置
+            String dataXPY = String.format(CREATE_TEMP_DATAX_PY, "/Users/dtstack/ide/Taier/datax", job_home);
+             fileDir = uploadSqlTextToHdfs(dataXPY, task.getTaskType(), task.getName(), tenantId);
+        } else {
+             fileDir = uploadSqlTextToHdfs(sqlText, task.getTaskType(), task.getName(), tenantId);
+        }
         return buildExeArgs(task, fileDir);
     }
 
@@ -141,6 +162,9 @@ public class DevelopScriptService {
             } else if (taskType.equals(EScheduleJobType.PYTHON.getVal())) {
                 fileName = String.format("python_%s_%s_%s.py", tenantId,
                         taskName, System.currentTimeMillis());
+            } else if (taskType.equals(EScheduleJobType.DATAX.getVal())) {
+                fileName = String.format("datax_%s_%s_%s.sh", tenantId,
+                        taskName, System.currentTimeMillis());
             }
 
             JSONObject hdfsConf = clusterService.getConfigByKey(tenantId, EComponentType.HDFS.getConfName(), null);
@@ -150,7 +174,13 @@ public class DevelopScriptService {
             if (taskType.equals(EScheduleJobType.SHELL.getVal())) {
                 sqlText = sqlText.replaceAll("\r\n", System.getProperty("line.separator"));
             }
-            datasourceOperator.uploadInputStreamToHdfs(hdfsConf, tenantId, sqlText.getBytes(), hdfsPath);
+            if(taskType.equals(EScheduleJobType.DATAX.getVal())) {
+                String job_home = "/Users/dtstack/ide/Taier/datax/"+taskName+".json";
+                String dataXPY = String.format(CREATE_TEMP_DATAX_PY, "/Users/dtstack/ide/Taier/datax", job_home);
+                datasourceOperator.uploadInputStreamToHdfs(hdfsConf, tenantId, dataXPY.getBytes(), hdfsPath);
+            }else {
+                datasourceOperator.uploadInputStreamToHdfs(hdfsConf, tenantId, sqlText.getBytes(), hdfsPath);
+            }
         } catch (Exception e) {
             LOG.error("Update task to HDFS failure", e);
             throw new RdosDefineException("Update task to HDFS failure:" + e.getMessage());

@@ -134,6 +134,12 @@ public enum EScheduleJobType {
      * HanaSQL
      */
     HANA_SQL(23, "HanaSQL", EJobType.SQL.getType(), 4, EComponentType.HANA, EComputeType.BATCH, EJobClientType.DATASOURCE_PLUGIN),
+
+
+    /**
+     * DataX
+     */
+    DATAX(24,"DataX", EJobType.PYTHON.getType(),14, EComponentType.SCRIPT, EComputeType.BATCH, EJobClientType.ENGINE_PLUGIN),
     ;
 
     private final Integer type;
