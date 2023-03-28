@@ -46,6 +46,8 @@ public enum DictType {
     DATA_DEVELOP_CATALOGUE(32),
     DATA_DEVELOP_FUNCTION(33),
 
+    SCRIPT_VERSION(34),
+
     ;
 
     public Integer type;

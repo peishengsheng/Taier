@@ -54,11 +54,11 @@ public class DataXTaskSaver extends AbstractTaskSaver{
 
     @Override
     public void afterProcessing(TaskResourceParam taskResourceParam, TaskVO taskVO) {
-        String job_home = "/Users/dtstack/ide/Taier/job";
-        boolean successCreateJson = CreateJsonFileUtil.createJsonFile(taskVO.getSqlText(), job_home, taskVO.getName());
-        if (!successCreateJson){
-            throw new TaierDefineException("创建datax.json文件失败");
-        }
+//        String job_home = "/Users/dtstack/ide/Taier/job";
+//        boolean successCreateJson = CreateJsonFileUtil.createJsonFile(taskVO.getSqlText(), job_home, taskVO.getName());
+//        if (!successCreateJson){
+//            throw new TaierDefineException("创建datax.json文件失败");
+//        }
     }
 
     /**

@@ -26,7 +26,7 @@
         <module>hadoop</module>
         <module>spark</module>
         <module>local-test</module>
-
+        <module>datax</module>
         <module>script</module>
     </modules>
 

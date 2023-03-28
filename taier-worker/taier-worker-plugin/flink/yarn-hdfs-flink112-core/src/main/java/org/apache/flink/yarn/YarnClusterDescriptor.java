@@ -19,7 +19,6 @@
 package org.apache.flink.yarn;
 
 import com.dtstack.taier.base.util.HadoopConfTool;
-import com.dtstack.taier.pluginapi.enums.EJobType;
 import com.dtstack.taier.flink.constant.ConfigConstant;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
